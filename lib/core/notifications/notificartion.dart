@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -44,6 +43,10 @@ class Notifications {
         "channelName",
         channelDescription: "channel description",
         importance: Importance.max,
+        priority: Priority.high,
+        ongoing: true,
+        styleInformation: BigTextStyleInformation(""),
+        playSound: true,
       ),
       iOS: IOSNotificationDetails(),
     );
@@ -90,7 +93,7 @@ class Notifications {
 // ? Notifacations Daily Basis
 
   static showNotificationScheduledDailyBasis({
-    int id = 0,
+    int? id,
     String? title,
     String? body,
     String? payload,
@@ -98,14 +101,15 @@ class Notifications {
   }) async =>
       _notification.zonedSchedule(
         // * Argumentlarinig positsiyasi MUHIM!
-        id,
+        id!,
         title,
         body,
+
         // * dailyNotifications
         await _scheduleDaily(
           Time(scheduledDate.hour, scheduledDate.minute),
         ),
-        // ),
+
         // * weeklyNOtifications
         // await _weeklySchedule(Time(11),
         // days: [DateTime.monday, DateTime.tuesday]),
@@ -128,7 +132,7 @@ class Notifications {
         time.hour, time.minute, time.second);
     return scheduledDate.isBefore(now)
         ? scheduledDate.add(
-            Duration(seconds: 15),
+            const Duration(seconds: 15),
           )
         : scheduledDate;
   }
@@ -140,5 +144,10 @@ class Notifications {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
     return scheduledDate;
+  }
+  // ? Cancel Specific Notifications
+
+  static cancelNotification(int id) async {
+    await _notification.cancel(id);
   }
 }

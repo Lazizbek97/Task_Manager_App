@@ -66,6 +66,7 @@ class _AddingTaskPageState extends State<AddingTaskPage> {
   ];
 
   int popUpMenuIndex = 0;
+  int? boxID;
 
   @override
   Widget build(BuildContext context) {
@@ -323,7 +324,7 @@ class _AddingTaskPageState extends State<AddingTaskPage> {
         margin: const EdgeInsets.only(bottom: 10),
         child: FloatingActionButton.extended(
           backgroundColor: Colors.black87,
-          onPressed: () {
+          onPressed: () async {
             // * Getting Input values
             String title = _taskTitleController.text;
             String date = _dateController.text;
@@ -342,7 +343,7 @@ class _AddingTaskPageState extends State<AddingTaskPage> {
             // *Adding data to Hive
             if (_formKey.currentState!.validate()) {
               creteriaNames.isEmpty ? creteriaNames.add("No Category") : null;
-              addTask(
+              await addTask(
                 title: title,
                 dedlineData: date,
                 dedlineTime: time,
@@ -353,7 +354,9 @@ class _AddingTaskPageState extends State<AddingTaskPage> {
                 color: AddingTaskPage.taskType,
               );
               // * Set notifications
-              setNotifications(
+
+              await setNotifications(
+                id: boxID!,
                 title: title,
                 body: details,
                 payload: date,
@@ -374,27 +377,28 @@ class _AddingTaskPageState extends State<AddingTaskPage> {
 
   // ? Set notifications
   setNotifications({
+    required int id,
     required String title,
     required String body,
     required String payload,
   }) {
     final today = DateTime.now();
-    if (selectedDate.month == today.month && selectedDate.day == today.day) {
-      DateTime newNotification = DateTime(
-        selectedDate.year,
-        selectedDate.month,
-        selectedDate.day,
-        selectedTime.hour,
-        selectedTime.minute,
-      );
 
-      Notifications.showNotificationScheduledDailyBasis(
-        title: title,
-        body: body,
-        payload: payload,
-        scheduledDate: newNotification,
-      );
-    }
+    DateTime newNotification = DateTime(
+      selectedDate.year,
+      selectedDate.month,
+      selectedDate.day,
+      selectedTime.hour,
+      selectedTime.minute,
+    );
+
+    Notifications.showNotificationScheduledDailyBasis(
+      id: id,
+      title: title,
+      body: body,
+      payload: payload,
+      scheduledDate: newNotification,
+    );
   }
 
   // ?  Adding taks to HiveDataBase
@@ -419,8 +423,8 @@ class _AddingTaskPageState extends State<AddingTaskPage> {
       ..color = color;
     final box = Boxes.getTask();
     await box.add(new_task);
+    boxID = new_task.key;
 
-    print(box.values.length);
     return Future.value();
   }
 
@@ -434,7 +438,6 @@ class _AddingTaskPageState extends State<AddingTaskPage> {
       setState(
         () {
           selectedTime = picked;
-          print(selectedTime.format(context));
           _hour = selectedTime.hour.toString();
           _minute = selectedTime.minute.toString();
           _time = _hour + ' : ' + '${_minute == "0" ? "00" : _minute}';
@@ -456,8 +459,6 @@ class _AddingTaskPageState extends State<AddingTaskPage> {
     if (picked != null) {
       setState(() {
         selectedDate = picked;
-        print(selectedDate);
-        print(DateTime.now().hour);
         _dateController.text = DateFormat("MM/dd/yyyy").format(selectedDate);
       });
     }

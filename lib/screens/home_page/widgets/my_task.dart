@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:task_manager/core/hive_boxes.dart';
+import 'package:task_manager/core/notifications/notificartion.dart';
 import 'package:task_manager/core/size_config.dart';
 import 'package:task_manager/models/done_tasks.dart';
 import 'package:task_manager/models/task_model.dart';
@@ -144,6 +145,8 @@ class _MyTaskState extends State<MyTask> {
                           box.containsKey(new_done_task.key)
                               ? new_done_task.save()
                               : box.add(new_done_task);
+                          Notifications.cancelNotification(task.key);
+
                           task.delete();
                         }
                       }
@@ -160,7 +163,7 @@ class _MyTaskState extends State<MyTask> {
 
   showSnackBar(context, selected) => ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 2),
           onVisible: () {},
           action: SnackBarAction(
               label: "Undo",

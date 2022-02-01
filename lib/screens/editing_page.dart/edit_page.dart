@@ -73,6 +73,7 @@ class _EditingPageState extends State<EditingPage> {
   ];
 
   int popUpMenuIndex = EditingPage.taskType;
+  int? boxId;
 
   @override
   Widget build(BuildContext context) {
@@ -298,9 +299,7 @@ class _EditingPageState extends State<EditingPage> {
               ),
               Center(
                 child: ElevatedButton.icon(
-                  onPressed: () {
-                    // print(_groupButtonsController.selectedIndexes.toList()[0]);
-                  },
+                  onPressed: () {},
                   icon: const Icon(
                     Icons.file_present_outlined,
                     color: Colors.black,
@@ -329,7 +328,7 @@ class _EditingPageState extends State<EditingPage> {
         margin: const EdgeInsets.only(bottom: 10),
         child: FloatingActionButton.extended(
           backgroundColor: Colors.black87,
-          onPressed: () {
+          onPressed: () async {
             String title = _taskTitleController.text;
             String date = _dateController.text;
             String time = _timeController.text;
@@ -346,7 +345,7 @@ class _EditingPageState extends State<EditingPage> {
 
             if (_formKey.currentState!.validate()) {
               creteriaNames.isEmpty ? creteriaNames.add("No Category") : null;
-              saveTask(
+              await saveTask(
                 title: title,
                 dedlineData: date,
                 dedlineTime: time,
@@ -357,7 +356,8 @@ class _EditingPageState extends State<EditingPage> {
                 color: EditingPage.taskType,
               );
 
-              setNotifications(
+              await setNotifications(
+                id: boxId!,
                 title: title,
                 body: details,
                 payload: date,
@@ -376,6 +376,7 @@ class _EditingPageState extends State<EditingPage> {
 
   // ? Set notifications
   setNotifications({
+    required int id,
     required String title,
     required String body,
     required String payload,
@@ -391,6 +392,7 @@ class _EditingPageState extends State<EditingPage> {
       );
 
       Notifications.showNotificationScheduledDailyBasis(
+        id: id,
         title: title,
         body: body,
         payload: payload,
@@ -421,6 +423,7 @@ class _EditingPageState extends State<EditingPage> {
     curTask.color = color;
 
     curTask.save();
+    boxId = curTask.key;
 
     return Future.value();
   }
