@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_manager/core/notifications/notificartion.dart';
 import 'package:task_manager/core/size_config.dart';
 import 'package:group_button/group_button.dart';
 import 'package:intl/intl.dart';
@@ -104,8 +105,6 @@ class _EditingPageState extends State<EditingPage> {
                               onSelected: (value) {
                                 setState(() {
                                   EditingPage.taskType = value as int;
-                                  // print(EditingPage.taskType);
-                                  // EditingPage.taskType = popUpMenuIndex;
                                 });
                               },
                               child: CircleAvatar(
@@ -207,6 +206,7 @@ class _EditingPageState extends State<EditingPage> {
                       ),
                       TextFormField(
                         controller: _placeController,
+                        maxLines: 4,
                         decoration: InputDecoration(
                           labelText: "Place",
                           labelStyle:
@@ -214,7 +214,7 @@ class _EditingPageState extends State<EditingPage> {
                           suffixIcon: IconButton(
                             onPressed: () {},
                             icon: const Icon(
-                              Icons.location_on_outlined,
+                              Icons.text_fields_outlined,
                               color: Colors.black,
                             ),
                           ),
@@ -333,7 +333,7 @@ class _EditingPageState extends State<EditingPage> {
             String title = _taskTitleController.text;
             String date = _dateController.text;
             String time = _timeController.text;
-            String place = _placeController.text;
+            String details = _placeController.text;
             String reminder = _reminderController.text;
 
             String taskType = _typeButtons[EditingPage.taskType];
@@ -350,11 +350,17 @@ class _EditingPageState extends State<EditingPage> {
                 title: title,
                 dedlineData: date,
                 dedlineTime: time,
-                place: place,
+                place: details,
                 reminder: reminder,
                 taksType: taskType,
                 criterias: creteriaNames,
                 color: EditingPage.taskType,
+              );
+
+              setNotifications(
+                title: title,
+                body: details,
+                payload: date,
               );
               Navigator.pop(context);
             }
@@ -366,6 +372,31 @@ class _EditingPageState extends State<EditingPage> {
         ),
       ),
     );
+  }
+
+  // ? Set notifications
+  setNotifications({
+    required String title,
+    required String body,
+    required String payload,
+  }) {
+    final today = DateTime.now();
+    if (selectedDate.month == today.month && selectedDate.day == today.day) {
+      DateTime newNotification = DateTime(
+        selectedDate.year,
+        selectedDate.month,
+        selectedDate.day,
+        selectedTime.hour,
+        selectedTime.minute,
+      );
+
+      Notifications.showNotificationScheduledDailyBasis(
+        title: title,
+        body: body,
+        payload: payload,
+        scheduledDate: newNotification,
+      );
+    }
   }
 
   // ?  Saving edited task to HiveDataBase

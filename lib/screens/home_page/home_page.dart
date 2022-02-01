@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:task_manager/core/hive_boxes.dart';
+import 'package:task_manager/core/notifications/notificartion.dart';
 import 'package:task_manager/core/size_config.dart';
 import 'package:task_manager/models/done_tasks.dart';
 import 'package:task_manager/models/task_model.dart';
@@ -9,7 +10,6 @@ import 'package:task_manager/screens/drawer_page/home_drawer.dart';
 import 'package:task_manager/screens/home_page/top_part.dart';
 import 'package:task_manager/screens/home_page/widgets/fade_color.dart';
 import 'package:task_manager/screens/home_page/widgets/my_task.dart';
-import 'package:task_manager/screens/home_page/widgets/pop_up_menu.dart';
 import 'package:task_manager/screens/home_page/widgets/tasks_done.dart';
 import 'package:task_manager/screens/home_page/widgets/upcoming.dart';
 
@@ -26,6 +26,11 @@ class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   void _update() {
     setState(() {});
+  }
+
+  @override
+  void initState() {
+    Notifications.init(initScheduled: true);
   }
 
   @override

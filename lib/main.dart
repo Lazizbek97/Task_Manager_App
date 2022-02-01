@@ -4,9 +4,11 @@ import 'package:task_manager/routes.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:hive/hive.dart';
 import 'models/task_model.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  tz.initializeTimeZones();
   final appDocDir = await path_provider.getApplicationDocumentsDirectory();
   Hive.init(appDocDir.path);
 
