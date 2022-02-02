@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:task_manager/core/hive_boxes.dart';
 import 'package:task_manager/models/task_model.dart';
-
-import '../home_page.dart';
 
 class PopUpMenuNotificaions extends StatefulWidget {
   PopUpMenuNotificaions({
@@ -16,7 +13,7 @@ class PopUpMenuNotificaions extends StatefulWidget {
 }
 
 class _PopUpMenuNotificaionsState extends State<PopUpMenuNotificaions> {
-  List switchItems = [false, false, false];
+  List switchItems = [true, true, true];
   List notifications = [];
   String date = DateFormat('MM/dd/yyyy').format(DateTime.now()).toString();
   List<TaskModel> boxList = Boxes.getTask().values.toList();

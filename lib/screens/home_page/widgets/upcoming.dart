@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:roundcheckbox/roundcheckbox.dart';
 import 'package:task_manager/core/hive_boxes.dart';
@@ -23,14 +24,15 @@ class _UpcomingEventsState extends State<UpcomingEvents> {
     Colors.orange.shade600,
     Colors.red,
   ];
+  double containerHeight = getHeight(270);
+  bool tileExpanded = false;
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 20,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       margin: const EdgeInsets.symmetric(vertical: 10),
-      height: getHeight(180),
+      height: tileExpanded ? containerHeight : getHeight(180),
       width: getWidth(600),
       decoration: BoxDecoration(
         color: popUpMenuColors[widget.tasks[widget.index].color],
@@ -71,9 +73,42 @@ class _UpcomingEventsState extends State<UpcomingEvents> {
               ),
             ],
           ),
-          Text(
-            widget.tasks[widget.index].title,
-            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18.0),
+          Expanded(
+            child: ExpansionTile(
+              onExpansionChanged: (value) {
+                tileExpanded = value;
+                setState(() {});
+              },
+              tilePadding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+              title: AutoSizeText(
+                widget.tasks[widget.index].title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18.0,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              trailing: const Text(
+                "Details",
+                style: TextStyle(
+                  color: Colors.blue,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+              expandedCrossAxisAlignment: CrossAxisAlignment.start,
+              expandedAlignment: Alignment.topLeft,
+              children: [
+                SizedBox(
+                  height: tileExpanded ? getHeight(80) : getHeight(0),
+                  child: SingleChildScrollView(
+                    child: Text(
+                      widget.tasks[widget.index].place,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

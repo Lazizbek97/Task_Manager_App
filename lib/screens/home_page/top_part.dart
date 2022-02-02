@@ -105,7 +105,6 @@ class _TopPartState extends State<TopPart> with TickerProviderStateMixin {
               initValue = value;
               HomePage.tabBarIndex = value;
               widget.update();
-
               setState(() {});
             },
             tabs: [

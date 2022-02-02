@@ -24,6 +24,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   void _update() {
     setState(() {});
   }
@@ -73,8 +74,6 @@ class _HomePageState extends State<HomePage> {
                       // ! Extract tosays tasks from DataBase
                       final tasksBox = box.values.toList().cast<TaskModel>();
 
-                      // PopUpMenuNotificaions.tasksBoxList = tasksBox;
-
                       tasksBox.forEach((element) {
                         element.dedlineDate == date
                             ? todays_tasks.add(element)
@@ -103,7 +102,7 @@ class _HomePageState extends State<HomePage> {
                       // ! Opening Done Taskes Box
                       List<DoneTasks> doneList =
                           Boxes.addDones().values.toList().cast<DoneTasks>();
-                      // print(doneList);
+
                       // -----------------------//
                       return (HomePage.tabBarIndex == 2
                               ? Boxes.addDones().isEmpty
@@ -117,7 +116,10 @@ class _HomePageState extends State<HomePage> {
                                   : tasks.length,
                               itemBuilder: (context, index) {
                                 List _pages = [
-                                  MyTask(tasks: tasks, index: index),
+                                  MyTask(
+                                      tasks: tasks,
+                                      index: index,
+                                      update: _update),
                                   UpcomingEvents(tasks: tasks, index: index),
                                   TasksDone(
                                     tasks: doneList,

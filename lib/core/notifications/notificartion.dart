@@ -1,3 +1,6 @@
+import 'dart:typed_data';
+
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -47,6 +50,7 @@ class Notifications {
         ongoing: true,
         styleInformation: BigTextStyleInformation(""),
         playSound: true,
+        color: Colors.yellow,
       ),
       iOS: IOSNotificationDetails(),
     );
@@ -106,13 +110,10 @@ class Notifications {
         body,
 
         // * dailyNotifications
-        await _scheduleDaily(
+        _scheduleDaily(
           Time(scheduledDate.hour, scheduledDate.minute),
+          scheduledDate,
         ),
-
-        // * weeklyNOtifications
-        // await _weeklySchedule(Time(11),
-        // days: [DateTime.monday, DateTime.tuesday]),
 
         await _notificationDetails(),
         payload: payload,
@@ -126,25 +127,17 @@ class Notifications {
       );
 
   // ?-----------------------------------------
-  static tz.TZDateTime _scheduleDaily(Time time) {
-    final now = tz.TZDateTime.now(tz.local);
-    final scheduledDate = tz.TZDateTime(tz.local, now.year, now.month, now.day,
-        time.hour, time.minute, time.second);
-    return scheduledDate.isBefore(now)
+  static tz.TZDateTime _scheduleDaily(Time time, DateTime dateTime) {
+    // final now = tz.TZDateTime.now(tz.local);
+    final scheduledDate = tz.TZDateTime(tz.local, dateTime.year, dateTime.month,
+        dateTime.day, time.hour, time.minute, time.second);
+    return scheduledDate.isBefore(dateTime)
         ? scheduledDate.add(
             const Duration(seconds: 15),
           )
         : scheduledDate;
   }
 
-  static tz.TZDateTime _weeklySchedule(Time time, {required List<int> days}) {
-    tz.TZDateTime scheduledDate = _scheduleDaily(time);
-
-    while (!days.contains(scheduledDate.weekday)) {
-      scheduledDate = scheduledDate.add(const Duration(days: 1));
-    }
-    return scheduledDate;
-  }
   // ? Cancel Specific Notifications
 
   static cancelNotification(int id) async {

@@ -100,6 +100,8 @@ class _TasksDoneState extends State<TasksDone> {
               widget.tasks[widget.index].title,
               style:
                   const TextStyle(fontWeight: FontWeight.w700, fontSize: 18.0),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

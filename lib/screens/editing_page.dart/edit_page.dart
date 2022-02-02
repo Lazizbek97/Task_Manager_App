@@ -171,6 +171,16 @@ class _EditingPageState extends State<EditingPage> {
                               validator: (value) {
                                 if (value!.isEmpty) {
                                   return "Please fill";
+                                } else {
+                                  try {
+                                    DateFormat("d/M/y").parse(value);
+                                    value.split("/").forEach((element) {
+                                      int.parse(element);
+                                    });
+                                    return null;
+                                  } catch (e) {
+                                    return "Invalid Date Format";
+                                  }
                                 }
                               },
                             ),
@@ -199,6 +209,18 @@ class _EditingPageState extends State<EditingPage> {
                               validator: (value) {
                                 if (value!.isEmpty) {
                                   return "Please fill";
+                                } else {
+                                  try {
+                                    TimeOfDay(
+                                      hour: int.parse(value.split(":")[0]),
+                                      minute: int.parse(
+                                        value.split(":")[1],
+                                      ),
+                                    );
+                                    return null;
+                                  } catch (e) {
+                                    return "Invalid Time Format";
+                                  }
                                 }
                               },
                             ),
@@ -245,6 +267,18 @@ class _EditingPageState extends State<EditingPage> {
                         validator: (value) {
                           if (value!.isEmpty) {
                             return "Please fill";
+                          } else {
+                            try {
+                              TimeOfDay(
+                                hour: int.parse(value.split(":")[0]),
+                                minute: int.parse(
+                                  value.split(":")[1],
+                                ),
+                              );
+                              return null;
+                            } catch (e) {
+                              return "Invalid Time Format";
+                            }
                           }
                         },
                       ),
@@ -356,11 +390,18 @@ class _EditingPageState extends State<EditingPage> {
                 color: EditingPage.taskType,
               );
 
+              selectedDate = DateFormat("MM/dd/yyyy").parse(date);
+              selectedTime = TimeOfDay(
+                  hour: int.parse(time.split(":")[0]),
+                  minute: int.parse(
+                    time.split(":")[1],
+                  ));
+
               await setNotifications(
                 id: boxId!,
                 title: title,
                 body: details,
-                payload: date,
+                payload: "date",
               );
               Navigator.pop(context);
             }
@@ -381,24 +422,22 @@ class _EditingPageState extends State<EditingPage> {
     required String body,
     required String payload,
   }) {
-    final today = DateTime.now();
-    if (selectedDate.month == today.month && selectedDate.day == today.day) {
-      DateTime newNotification = DateTime(
-        selectedDate.year,
-        selectedDate.month,
-        selectedDate.day,
-        selectedTime.hour,
-        selectedTime.minute,
-      );
+    // final today = DateTime.now();
+    DateTime newNotification = DateTime(
+      selectedDate.year,
+      selectedDate.month,
+      selectedDate.day,
+      selectedTime.hour,
+      selectedTime.minute,
+    );
 
-      Notifications.showNotificationScheduledDailyBasis(
-        id: id,
-        title: title,
-        body: body,
-        payload: payload,
-        scheduledDate: newNotification,
-      );
-    }
+    Notifications.showNotificationScheduledDailyBasis(
+      id: id,
+      title: title,
+      body: body,
+      payload: payload,
+      scheduledDate: newNotification,
+    );
   }
 
   // ?  Saving edited task to HiveDataBase

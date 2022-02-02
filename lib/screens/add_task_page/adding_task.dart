@@ -165,6 +165,16 @@ class _AddingTaskPageState extends State<AddingTaskPage> {
                               validator: (value) {
                                 if (value!.isEmpty) {
                                   return "Please fill";
+                                } else {
+                                  try {
+                                    DateFormat("d/M/y").parse(value);
+                                    value.split("/").forEach((element) {
+                                      int.parse(element);
+                                    });
+                                    return null;
+                                  } catch (e) {
+                                    return "Invalid Date Format";
+                                  }
                                 }
                               },
                             ),
@@ -193,6 +203,18 @@ class _AddingTaskPageState extends State<AddingTaskPage> {
                               validator: (value) {
                                 if (value!.isEmpty) {
                                   return "Please fill";
+                                } else {
+                                  try {
+                                    TimeOfDay(
+                                      hour: int.parse(value.split(":")[0]),
+                                      minute: int.parse(
+                                        value.split(":")[1],
+                                      ),
+                                    );
+                                    return null;
+                                  } catch (e) {
+                                    return "Invalid Time Format";
+                                  }
                                 }
                               },
                             ),
@@ -239,6 +261,18 @@ class _AddingTaskPageState extends State<AddingTaskPage> {
                         validator: (value) {
                           if (value!.isEmpty) {
                             return "Please fill";
+                          } else {
+                            try {
+                              TimeOfDay(
+                                hour: int.parse(value.split(":")[0]),
+                                minute: int.parse(
+                                  value.split(":")[1],
+                                ),
+                              );
+                              return null;
+                            } catch (e) {
+                              return "Invalid Time Format";
+                            }
                           }
                         },
                       ),
@@ -353,6 +387,14 @@ class _AddingTaskPageState extends State<AddingTaskPage> {
                 criterias: creteriaNames,
                 color: AddingTaskPage.taskType,
               );
+
+              selectedDate = DateFormat("MM/dd/yyyy").parse(date);
+              selectedTime = TimeOfDay(
+                  hour: int.parse(time.split(":")[0]),
+                  minute: int.parse(
+                    time.split(":")[1],
+                  ));
+
               // * Set notifications
 
               await setNotifications(
@@ -363,7 +405,7 @@ class _AddingTaskPageState extends State<AddingTaskPage> {
               );
 
               // * Go back to HomePage
-              Navigator.pop(context);
+              Navigator.pushReplacementNamed(context, "/");
             }
           },
           label: const Text(

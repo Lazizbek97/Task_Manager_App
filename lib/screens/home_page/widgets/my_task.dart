@@ -5,13 +5,19 @@ import 'package:task_manager/core/size_config.dart';
 import 'package:task_manager/models/done_tasks.dart';
 import 'package:task_manager/models/task_model.dart';
 import 'package:roundcheckbox/roundcheckbox.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 class MyTask extends StatefulWidget {
-  MyTask({Key? key, required this.tasks, required this.index})
-      : super(key: key);
+  MyTask({
+    Key? key,
+    required this.tasks,
+    required this.index,
+    required this.update,
+  }) : super(key: key);
 
   List<TaskModel> tasks;
   int index;
+  final update;
 
   @override
   State<MyTask> createState() => _MyTaskState();
@@ -25,14 +31,15 @@ class _MyTaskState extends State<MyTask> {
     Colors.red,
   ];
 
+  double containerHeight = getHeight(270);
+  bool tileExpanded = false;
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 20,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       margin: const EdgeInsets.symmetric(vertical: 10),
-      height: getHeight(180),
+      height: tileExpanded ? containerHeight : getHeight(180),
       width: getWidth(600),
       decoration: BoxDecoration(
         color: popUpMenuColors[widget.tasks[widget.index].color],
@@ -73,9 +80,40 @@ class _MyTaskState extends State<MyTask> {
               ),
             ],
           ),
-          Text(
-            widget.tasks[widget.index].title,
-            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18.0),
+          Expanded(
+            child: ExpansionTile(
+              onExpansionChanged: (value) {
+                tileExpanded = value;
+                setState(() {});
+              },
+              tilePadding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+              expandedCrossAxisAlignment: CrossAxisAlignment.start,
+              expandedAlignment: Alignment.topLeft,
+              title: AutoSizeText(
+                widget.tasks[widget.index].title,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w700, fontSize: 18.0),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              trailing: const Text(
+                "Details",
+                style: TextStyle(
+                  color: Colors.blue,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+              children: [
+                SizedBox(
+                  height: tileExpanded ? getHeight(80) : getHeight(0),
+                  child: SingleChildScrollView(
+                    child: Text(
+                      widget.tasks[widget.index].place,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -148,6 +186,7 @@ class _MyTaskState extends State<MyTask> {
                           Notifications.cancelNotification(task.key);
 
                           task.delete();
+                          widget.update();
                         }
                       }
                     },
